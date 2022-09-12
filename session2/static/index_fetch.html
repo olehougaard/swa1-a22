@@ -26,6 +26,11 @@
 
     window.init = function() {
         const theView = view(window)
+        fetch('http://localhost:9090/persons')
+        .then(res => res.ok ? res : Promise.reject(res.statusText))
+        .then(res => res.json())
+        .then(persons => display(theView, persons))
+        .catch(error => theView.displayError(error))
     }
 </script>
 </head>

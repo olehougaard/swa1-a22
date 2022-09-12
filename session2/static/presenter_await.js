@@ -10,7 +10,7 @@ export default (init_model, view) => {
           try {
             const headers = { 'Content-Type': 'application/json', Accept: 'application/json' }
             const employeeResponse = await fetch('http://localhost:9090/employees', { method: 'POST', body: JSON.stringify({salary, manager:false}), headers })
-            if (!employeeResponse.ok) Error(employeeResponse.text)
+            if (!employeeResponse.ok) throw new Exception(employeeResponse.text)
             const employee = await employeeResponse.json()
             const personResponse = await fetch('http://localhost:9090/persons/' + id, { method: 'PATCH', body: JSON.stringify(employee), headers })
             const person = await personResponse.json()
