@@ -17,7 +17,7 @@
         import presenter from './presenter_fetch.js'
         import view from './view.js'
 
-        function display(persons, employees = []) {
+        function display(theView, persons, employees = []) {
             const theModel = model(persons, employees)
             const thePresenter = presenter(theModel, theView)
             theView.listen(thePresenter.onAction)
@@ -31,7 +31,7 @@
                 const persons = await personsResponse.json()
                 const employeesResponse = await fetch('http://localhost:9090/employees')
                 const employees = await employeesResponse.json()
-                display(persons, employees)
+                display(theView, persons, employees)
             } catch (e) {
                 theView.displayError(e)
             }

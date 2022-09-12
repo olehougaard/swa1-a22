@@ -17,23 +17,23 @@
     import presenter from './presenter_fetch.js'
     import view from './view.js'
     
-    function display(persons, employees = []) {
+    function display(view, persons, employees = []) {
         const theModel = model(persons, employees)
-        const thePresenter = presenter(theModel, theView)
-        theView.listen(thePresenter.onAction)
-        theView.update(theModel)
+        const thePresenter = presenter(theModel, view)
+        view.listen(thePresenter.onAction)
+        view.update(theModel)
     }
 
     window.init = function() {
         const theView = view(window)
         Promise.all([fetch('http://localhost:9090/persons'), fetch('http://localhost:9090/employees')])
-        .then(res => res.every(r => r.ok) ? r : Promise.reject('Error message'))
+        .then(res => res.every(r => r.ok) ? res : Promise.reject('Error message'))
         .then(res => res.map(r => r.json()))
         .then(r => Promise.all(r))
         .then(([persons, employees]) => {
-            display(persons, employees)
+            display(theView, persons, employees)
         })
-        .catch( e => view.displayError(e))
+        .catch( e => theView.displayError(e))
     }
 </script>
 </head>
