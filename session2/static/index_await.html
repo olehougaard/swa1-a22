@@ -1,0 +1,52 @@
+<html>
+<head> 
+    <title>People</title>
+    <style>
+        td {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+        }
+        table {
+            border: 1px solid black;
+            border-spacing: 0;
+        }
+    </style>
+    <script type = 'module'>
+        import model from './model.js'
+        import presenter from './presenter_fetch.js'
+        import view from './view.js'
+
+        function display(persons, employees = []) {
+            const theModel = model(persons, employees)
+            const thePresenter = presenter(theModel, theView)
+            theView.listen(thePresenter.onAction)
+            theView.update(theModel)
+        }
+
+        window.init = async function() {
+            const theView = view(window)
+            try {
+                const personsResponse = await fetch('http://localhost:9090/persons')
+                const persons = await personsResponse.json()
+                const employeesResponse = await fetch('http://localhost:9090/employees')
+                const employees = await employeesResponse.json()
+                display(persons, employees)
+            } catch (e) {
+                theView.displayError(e)
+            }
+        }
+        init()
+    </script>
+</head>
+<body onload="init()">
+    <div id='base'>
+        <h1>People</h1>
+        <table id='employees'>
+            <thead><tr><td>Id</td><td>Name</td><td>Employee id</td><td>Salary</td><td>Manager</td></tr></thead>
+            <tbody id='employee_data'></tbody>
+        </table>
+        <p id='error messages'>
+    </div>
+</body>
+</html>
