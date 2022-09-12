@@ -26,26 +26,6 @@
 
         window.init = function() {
             const theView = view(window)
-            const request = new XMLHttpRequest()
-            request.open('GET', 'http://localhost:9090/persons')
-            request.send()
-            request.onerror = () => {view.displayError}
-            request.onload = () => {
-                if (request.status != 200) {
-                    theView.displayError(request.responseText)
-                }
-                const persons = JSON.parse(request.responseText)
-                request.open('GET', 'http://localhost:9090/employees')
-                request.send()
-                request.onerror = () => {view.displayError(request.responseText)}
-                if (request.status != 200) {
-                    theView.displayError(request.responseText)
-                }
-                request.onload = () => {
-                    const employees = JSON.parse(request.responseText)
-                    display(theView, persons, employees)
-                }
-            }
         }
     </script>
 </head>

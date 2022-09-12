@@ -26,14 +26,6 @@
 
     window.init = function() {
         const theView = view(window)
-        Promise.all([fetch('http://localhost:9090/persons'), fetch('http://localhost:9090/employees')])
-        .then(res => res.every(r => r.ok) ? res : Promise.reject('Error message'))
-        .then(res => res.map(r => r.json()))
-        .then(r => Promise.all(r))
-        .then(([persons, employees]) => {
-            display(theView, persons, employees)
-        })
-        .catch( e => theView.displayError(e))
     }
 </script>
 </head>
