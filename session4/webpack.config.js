@@ -2,8 +2,20 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: './src/init.js',
+  entry: './src/init.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
   mode: 'development',
+  resolve: {
+    extensions: ['.ts', '.js']
+  },
   devServer: {
     static: './dist'
   },

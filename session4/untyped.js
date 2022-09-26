@@ -1,6 +1,6 @@
 function power(m, n) {
     if (!Number.isInteger(n) || n < 0)
-        throw new Error("Invalid input")
+        return NaN
     if (n === 0)
         return m
     else if (n % 2 === 0)
