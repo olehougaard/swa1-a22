@@ -1,12 +1,13 @@
 class Person {
-    private name: string
+    private _name: string
     private age: number
 
-    constructor(name, age) {
-        this.name = name
+    constructor(name: string, age: number) {
+        this._name = name
         this.age = age
     }
-    getName() { return this.name }
+    
+    get name() { return this._name }
 
     getAge() { return this.age }
 }
@@ -16,7 +17,7 @@ class Company {
     private address: string
     private employees: Person[]
 
-    constructor(name, address) {
+    constructor(name: string, address: string) {
         this.name = name
         this.address = address
         this.employees = []
@@ -33,5 +34,7 @@ class Company {
         this.employees.splice(index, 1)
     }
 
-    getEmployees() { return [...this.employees] }
+    getEmployees() { 
+        return [...this.employees] 
+    }
 }
