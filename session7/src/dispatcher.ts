@@ -22,5 +22,6 @@ export const createDispatcher =  (store: ReduceStore) => async ({type, ...params
         break;
 
       default:
+        store.reduce({type: 'none', ...params})
     }
 }

@@ -14,11 +14,11 @@ export default (init_model: Model): ReduceStore => {
   let model = init_model
   const observers: Observer[] = []
 
-  function reducer(action: Action, model: Model) {
+  function reducer(model: Model, action: Action) {
     switch(action.type) {
       case 'hire':
         const { employee, person } = action
-        return model.addEmployee(employee!).updatePerson(person!)
+        return model.addEmployee(employee).updatePerson(person)
 
       default:
         return model
@@ -30,7 +30,7 @@ export default (init_model: Model): ReduceStore => {
   }
 
   const reduce = (action: Action ) => {
-    model = reducer(action, model)
+    model = reducer(model, action)
     observers.forEach(o => o(model))
   }
 

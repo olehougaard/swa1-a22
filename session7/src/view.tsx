@@ -20,7 +20,7 @@ const PersonData = ({person, dispatcher}: Props): React.ReactElement[] => [
 ] 
 
 const PersonRow = (props: Props) => (
-    <tr>
+    <tr key={props.person.id}>
         {PersonData(props)}
     </tr>
 )
