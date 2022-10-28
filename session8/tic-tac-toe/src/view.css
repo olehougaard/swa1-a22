@@ -1,0 +1,21 @@
+td {
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
+}
+td.blank {
+  background: white;
+}
+td.X {
+  background-image: url(X.png);
+}
+td.O {
+  background-image: url(O.png);
+}
+table {
+  border: 1px solid black;
+  border-spacing: 0;
+}
+#reset {
+  margin-top: 10px;
+}
