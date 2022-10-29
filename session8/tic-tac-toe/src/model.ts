@@ -1,11 +1,11 @@
 export type Player = 'X' | 'O'
-export type Board = ('X' | 'O' | undefined)[][]
+export type Board = ('X' | 'O' | '')[][]
 export type Game = {
     gameNumber: number,
     board: Board,
     ongoing: boolean,
     inTurn: Player,
-    winner?: Player,
+    winState?: {winner: Player, row?: any},
     stalemate: boolean
 }
 
@@ -17,9 +17,7 @@ export type Move = {
 }
 
 export type GameState = 
-    { mode: 'playing', player: Player, game: Game} 
-  | { mode: 'waiting', player: Player, game: Game} 
-  | { mode: 'no game' }
+    { mode: 'playing' | 'waiting' | 'no game', player?: Player, game?: Game} 
 
 function set<T>(xs: T[], i: number, e: T): T[] {
     return xs.map((x, inx) => inx === i? e : x)

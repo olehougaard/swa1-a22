@@ -101,7 +101,7 @@ gameserver.post('/games/:gameNumber/moves', (req, res) => {
             res.send(JSON.stringify({ 
                 move: {x, y, player: game.playerInTurn}, 
                 inTurn: afterMove.playerInTurn, 
-                winner: afterMove.winner, 
+                winState: afterMove.winState, 
                 stalemate: afterMove.stalemate  }))
         } else {
             res.sendStatus(403)
@@ -113,7 +113,7 @@ gameserver.get('/games/:gameNumber/moves', (req, res) => {
     send_game_data(res, req.params.gameNumber, g => ({ 
         moves: g.moves, 
         inTurn: g.playerInTurn,
-        winner: g.winner,
+        winState: g.winState,
         stalemate: g.stalemate
     }))
 })

@@ -53,18 +53,18 @@ export async function newGameThunk(dispatch: Dispatch, _: GetState) {
     }
 }
 
-export function waitForMove(game: Game, expectedPlayer: Player) {
+export function waitForMove(gameNumber: number, expectedPlayer: Player) {
     return shortPollingThunk<MakeMovePayload>({
         intervalMs: 100,
         async polling(): Promise<MakeMovePayload> {
-            const response = await fetch(`http://localhost:8080/games/${game.gameNumber}/moves`)
+            const response = await fetch(`http://localhost:8080/games/${gameNumber}/moves`)
             if (response.ok) {
-                const { moves, inTurn, winner, stalemate }: { moves: Move[], inTurn: Player, winner: any, stalemate: any } = await response.json()
-                return { move: moves[moves.length - 1], inTurn, winner, stalemate }
+                const { moves, inTurn, winState, stalemate }: { moves: Move[], inTurn: Player, winState: { winner: Player, row?: any }, stalemate: boolean } = await response.json()
+                return { move: moves[moves.length - 1], inTurn, winState: winState, stalemate }
             } else {
                 return Promise.reject<MakeMovePayload>(response.statusText)
             }
-                    },
+        },
         actionCreator(m: MakeMovePayload) {
             if (m.inTurn === expectedPlayer)
                 return gameSlice.actions.makeMove(m)
@@ -78,7 +78,7 @@ export function joinGameThunk(gameNumber: number): Thunk {
         if (response.ok) {
             const game = await response.json()
             dispatch(gameSlice.actions.startGame({player: 'O', game}))
-            dispatch(waitForMove(game, 'O'))
+            dispatch(waitForMove(game.gameNumber, 'O'))
         }
     }
 }
@@ -92,10 +92,10 @@ export function makeMoveThunk(x: number, y: number): Thunk {
                 `http://localhost:8080/games/${gameState.game.gameNumber}/moves`, 
                 { method: 'POST', body: JSON.stringify({x, y, inTurn: gameState.player}), headers : { 'Content-Type': 'application/json', Accept: 'application/json' }})
             if (response.ok) {
-                response.json()
-                .then(gameSlice.actions.makeMove)
-                .then(dispatch)
-                dispatch(waitForMove(gameState.game, gameState.player))
+                const payload: MakeMovePayload = await response.json()
+                console.log(payload.winState)
+                dispatch(gameSlice.actions.makeMove(payload))
+                dispatch(waitForMove(gameState.game.gameNumber, gameState.player))
             }
         }
     }

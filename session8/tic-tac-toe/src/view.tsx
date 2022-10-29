@@ -1,23 +1,27 @@
 import { Store } from '@reduxjs/toolkit';
 import * as React from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux'
+import { Game, otherPlayer, Player } from './model';
 import { State, Dispatch } from './store';
 import { joinGameThunk, makeMoveThunk, newGameThunk } from './thunks';
 import './view.css';
 
-const Board = () => {
+const Board = ({enabled}: {enabled: boolean}) => {
   const gameState = useSelector((s: State) => s.game)
-  if (gameState.mode === 'no game') return <div></div>
-  const { board } = gameState.game
+  const {board} = gameState.game
   const dispatch: Dispatch = useDispatch()
   return (
     <table>
       <tbody>
         { board.map((row, x) =>
-            <tr key={x}>{ row.map((tile, y) => 
-              <td key={x+''+y}
-                  className={tile || 'blank'}
-                  onClick= {() => dispatch(makeMoveThunk(x, y))}/>)
+            <tr key={x}>{ row.map((tile, y) => {
+              if (tile)
+                return <td key = {x + '' + y} className = { tile }/>
+              else if (enabled)
+                return <td key = {x + '' + y} className = {'blank'} onClick = {() => dispatch(makeMoveThunk(x, y))}/>
+              else
+              return <td key = {x + '' + y} className = {'inert'}/>
+            })
             }</tr>
         )}
       </tbody>
@@ -36,7 +40,7 @@ const Lobby = () => {
         games.map(({gameNumber}) => 
           <div key={gameNumber}>
             Game {gameNumber}
-            <button className = 'join' onClick={() => dispatch(joinGameThunk(gameNumber))} >Join</button>
+            <button className = 'join' onClick = {() => dispatch(joinGameThunk(gameNumber))} >Join</button>
           </div>)
       }
       <button id = 'new' onClick={() => dispatch(newGameThunk)}>New game</button>
@@ -44,21 +48,62 @@ const Lobby = () => {
   )
 }
 
-const Waiting = () => (
+const WaitingForGame = () => (
   <div>
     <h1>Waiting for other player...</h1>
   </div>
 )
 
+const Active = () => {
+  const {player} = useSelector((s: State) => s.game)
+  return <div>
+    <h2>Your turn, { player }</h2>
+    <Board enabled = {true}/>
+  </div>
+}
+
+const WaitingForTurn = () => {
+  const {player} = useSelector((s: State) => s.game)
+  return <div>
+    <h2>Waiting for { otherPlayer(player) }</h2>
+    <Board enabled = {false}/>
+  </div>
+}
+
+const GameOver = () => {
+  const {game} = useSelector((s: State) => s.game)
+  return <div>
+    <h1>Game {game.gameNumber} complete</h1>
+    <h2>{game.stalemate? 'Stalemate' : game.winState.winner + ' won'}</h2>
+    <Board enabled = {false}/>
+  </div>
+}
+
+const Playing = () => {
+  const {game, player} = useSelector((s: State) => s.game)
+  return <div>
+    <h1>Playing game {game.gameNumber}</h1>
+    {game.inTurn === player? <Active/> : <WaitingForTurn/>}
+  </div>
+}
+
+const GamePage = () => {
+  const {game} = useSelector((s: State) => s.game)
+  if (game.winState || game.stalemate)
+    return <GameOver/>
+  else
+    return <Playing/>
+}
+
 const Page = () => {
-  const game = useSelector((s: State) => s.game)
-  switch(game.mode) {
+  const gameState = useSelector((s: State) => s.game)
+  switch(gameState.mode) {
     case 'no game':
-      return <Lobby></Lobby>
+      return <Lobby/>
     case 'waiting':
-      return <Waiting></Waiting>
+      return <WaitingForGame/>
     case 'playing':
-      return <Board></Board>
+      return <GamePage/>
   }
 }
 

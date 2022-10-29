@@ -4,7 +4,7 @@ import { applyMove, Move, Player, GameState, Game, emptyGameState } from './mode
 export type MakeMovePayload = {
     move: Move,
     inTurn: Player,
-    winner?: Player,
+    winState?: { winner: Player, row?: any},
     stalemate: boolean
 }
 

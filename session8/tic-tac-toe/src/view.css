@@ -5,6 +5,10 @@ td {
 }
 td.blank {
   background: white;
+  cursor: pointer;
+}
+td.inert {
+  background: white;
 }
 td.X {
   background-image: url(X.png);

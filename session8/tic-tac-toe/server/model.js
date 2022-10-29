@@ -18,13 +18,13 @@ const model = (() => {
             const w = winningRow(candidate)
             return w && { winner: candidate, row : w }
         }
-        const winner = getWinner('X') || getWinner('O')
-        const stalemate = plateFull && !winner
+        const winState = getWinner('X') || getWinner('O')
+        const stalemate = plateFull && !winState
         
         const legalMove = (x, y) => {
             if (x < 0 || y < 0 || x > 2 || y > 2) return false
             if (board[x][y]) return false
-            if (winner || stalemate) return false
+            if (winState || stalemate) return false
             return true
         }
         
@@ -33,21 +33,19 @@ const model = (() => {
             return createModel(setTile(board, x, y, inTurn), (inTurn === 'X') ? 'O' : 'X', gameNumber, [...moves, {x, y, player: inTurn}])
         }
         
-        const json = (extras = {}) => 
-            Object.assign(extras, 
-                          {board, inTurn, winner, stalemate, gameNumber})
+        const json = (extras = {}) => ({...extras, board, inTurn, winner: winState, stalemate, gameNumber})
 
         const conceded = winner => {
-            const win_state = { winner, row: undefined}
+            const winState = { winner, row: undefined}
             const conceded_state = { 
-                winner: win_state, 
+                winState, 
                 stalemate: false, 
                 playerInTurn: inTurn, 
                 legalMove: () => false, 
                 makeMove: () => conceded_state,
                 conceded: () => conceded_state, 
                 board, 
-                json: (extras = {}) => Object.assign(extras,  {board, inTurn, winner: win_state, stalemate, gameNumber}), 
+                json: (extras = {}) => Object.assign(extras,  {board, inTurn, winState, stalemate, gameNumber}), 
                 gameNumber, 
                 moves: [...moves, { conceded: true, player: inTurn }]
             }
@@ -55,7 +53,7 @@ const model = (() => {
         }
         
         return { 
-            winner, 
+            winState, 
             stalemate, 
             playerInTurn: inTurn, 
             legalMove, 
