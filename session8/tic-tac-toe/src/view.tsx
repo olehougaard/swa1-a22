@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux'
 import { Game, otherPlayer, Player } from './model';
 import { State, Dispatch, gameSlice } from './store';
-import { joinGameThunk, makeMoveThunk, newGameThunk } from './thunks';
+import { concedeThunk, joinGameThunk, makeMoveThunk, newGameThunk } from './thunks';
 import './view.css';
 
 const Board = ({enabled}: {enabled: boolean}) => {
@@ -56,9 +56,11 @@ const WaitingForGame = () => (
 
 const Active = () => {
   const {player} = useSelector((s: State) => s.game)
+  const dispatch: Dispatch = useDispatch()
   return <div>
     <h2>Your turn, { player }</h2>
     <Board enabled = {true}/>
+    <button onClick = {() => dispatch(concedeThunk)}>Concede game</button>
   </div>
 }
 

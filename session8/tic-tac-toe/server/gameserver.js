@@ -75,11 +75,11 @@ gameserver.patch('/games/:gameNumber', (req, res) => {
                 ongoing_games[gameNumber] = true
                 res.send(games[gameNumber].json({ongoing: true}))
             }
-        } else if (game.hasOwnProperty('winner')) {
+        } else if (game.hasOwnProperty('winState')) {
             if (!ongoing_games[gameNumber])
                 res.status(403).send()
             else {
-                const winner = game.winner
+                const {winState: {winner}} = game
                 games[gameNumber] = games[gameNumber].conceded(winner)
                 res.send(games[gameNumber].json({ongoing: true}))
             }

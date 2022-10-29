@@ -40,7 +40,7 @@ const model = (() => {
             const conceded_state = { 
                 winState, 
                 stalemate: false, 
-                playerInTurn: inTurn, 
+                playerInTurn: (inTurn === 'X') ? 'O' : 'X', 
                 legalMove: () => false, 
                 makeMove: () => conceded_state,
                 conceded: () => conceded_state, 

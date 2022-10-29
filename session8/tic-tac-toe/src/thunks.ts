@@ -1,4 +1,4 @@
-import { Game, Move, Player } from "./model";
+import { Game, Move, otherPlayer, Player } from "./model";
 import { Thunk, continuousPollingThunk, shortPollingThunk } from "./thunklib"
 import { Dispatch, GetState, MakeMovePayload, lobbySlice, gameSlice } from "./store"
 
@@ -39,7 +39,7 @@ function waitForGameThunk(game: Game): Thunk {
         },
         actionCreator(game: Game) {
             if (game.ongoing) 
-                return gameSlice.actions.startGame({player: 'X', game})
+                return gameSlice.actions.setGame({player: 'X', game})
         }
     })
 }
@@ -76,8 +76,8 @@ export function joinGameThunk(gameNumber: number): Thunk {
     return async function(dispatch: Dispatch, _: GetState) {
         const response = await fetch(`http://localhost:8080/games/${gameNumber}`, { method: 'PATCH', body: JSON.stringify({ongoing: true}), headers : { 'Content-Type': 'application/json', Accept: 'application/json' }})
         if (response.ok) {
-            const game = await response.json()
-            dispatch(gameSlice.actions.startGame({player: 'O', game}))
+            const game: Game = await response.json()
+            dispatch(gameSlice.actions.setGame({player: 'O', game}))
             dispatch(waitForMove(game.gameNumber, 'O'))
         }
     }
@@ -93,10 +93,24 @@ export function makeMoveThunk(x: number, y: number): Thunk {
                 { method: 'POST', body: JSON.stringify({x, y, inTurn: gameState.player}), headers : { 'Content-Type': 'application/json', Accept: 'application/json' }})
             if (response.ok) {
                 const payload: MakeMovePayload = await response.json()
-                console.log(payload.winState)
                 dispatch(gameSlice.actions.makeMove(payload))
                 dispatch(waitForMove(gameState.game.gameNumber, gameState.player))
             }
+        }
+    }
+}
+
+
+export async function concedeThunk(dispatch: Dispatch, getState: GetState) {
+    const state = getState()
+    const {mode, player, game: {gameNumber}} = state.game
+    if (mode === 'playing') {
+        const response = await fetch(
+            `http://localhost:8080/games/${gameNumber}`, 
+            { method: 'PATCH', body: JSON.stringify({winState: {winner: otherPlayer(player)}}), headers : { 'Content-Type': 'application/json', Accept: 'application/json' }})
+        if (response.ok) {
+            const game: Game = await response.json()
+            dispatch(gameSlice.actions.setGame({player, game}))
         }
     }
 }

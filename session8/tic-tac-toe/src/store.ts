@@ -25,7 +25,7 @@ const gameReducers = {
         const { player, game } = action.payload
         return {mode: 'waiting', player, game}
     },
-    startGame(_: GameState, action: PayloadAction<GamePayload>): GameState {
+    setGame(_: GameState, action: PayloadAction<GamePayload>): GameState {
         const { player, game } = action.payload
         return {mode: 'playing', player, game}
     },
