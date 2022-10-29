@@ -17,7 +17,7 @@ const gameReducers = {
     makeMove(state: GameState, action: PayloadAction<MakeMovePayload>): GameState {
         const {move, ...props} = action.payload
         if (state.mode === 'playing') {
-            return {...state, game: { ...state.game, board: applyMove(state.game.board, move), ...props}}
+            return {...state, game: {...state.game, board: applyMove(state.game.board, move), ...props}}
         } else
             return state
     },
@@ -28,6 +28,9 @@ const gameReducers = {
     startGame(_: GameState, action: PayloadAction<GamePayload>): GameState {
         const { player, game } = action.payload
         return {mode: 'playing', player, game}
+    },
+    leaveGame(_: GameState, __: Action): GameState {
+        return {mode: 'no game'}
     }
 } 
 
@@ -60,7 +63,7 @@ export const lobbySlice = createSlice({
 export type State = { lobby: Game[], game: GameState }
 
 export const store = configureStore<State>({
-    reducer: { game: gameSlice.reducer, lobby: lobbySlice.reducer}
+    reducer: {game: gameSlice.reducer, lobby: lobbySlice.reducer}
 })
 
 export type StoreType = typeof store
