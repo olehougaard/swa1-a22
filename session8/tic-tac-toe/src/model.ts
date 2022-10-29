@@ -2,6 +2,7 @@ export type Player = 'X' | 'O'
 export type Board = ('X' | 'O' | '')[][]
 export type Game = {
     gameNumber: number,
+    gameName: string,
     board: Board,
     ongoing: boolean,
     inTurn: Player,

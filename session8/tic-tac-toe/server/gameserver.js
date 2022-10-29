@@ -4,8 +4,8 @@ const model = require('./model.js')
 const games = []
 const ongoing_games = {}
 
-const create_game = () => {
-    games.push(model(games.length))
+const create_game = (gameNumber, gameName) => {
+    games.push(model(gameNumber, gameName))
     return games[games.length - 1]
 }
 
@@ -45,8 +45,12 @@ gameserver.use(function(_, res, next) {
     next();
 });
 
-gameserver.post('/games', (_, res) => {
-    res.send(create_game().json({ongoing: false}))
+gameserver.post('/games', async (req, res) => {
+    const body = await req.body
+    const params = JSON.parse(body)
+    const gameNumber = games.length
+    const gameName = params.gameName ?? 'Game number ' + gameNumber
+    res.send(create_game(gameNumber, gameName).json({ongoing: false}))
 })
 
 gameserver.get('/games', (_, res) => {
@@ -95,12 +99,12 @@ gameserver.post('/games/:gameNumber/moves', (req, res) => {
         const game = games[gameNumber]
         if (!ongoing_games[gameNumber])
             res.sendStatus(404)
-        else if (inTurn === game.playerInTurn && game.legalMove(x,y)) {
+        else if (inTurn === game.inTurn && game.legalMove(x,y)) {
             const afterMove = game.makeMove(x, y)
             games[gameNumber] = afterMove
             res.send(JSON.stringify({ 
-                move: {x, y, player: game.playerInTurn}, 
-                inTurn: afterMove.playerInTurn, 
+                move: {x, y, player: game.inTurn}, 
+                inTurn: afterMove.inTurn, 
                 winState: afterMove.winState, 
                 stalemate: afterMove.stalemate  }))
         } else {
@@ -112,7 +116,7 @@ gameserver.post('/games/:gameNumber/moves', (req, res) => {
 gameserver.get('/games/:gameNumber/moves', (req, res) => {
     send_game_data(res, req.params.gameNumber, g => ({ 
         moves: g.moves, 
-        inTurn: g.playerInTurn,
+        inTurn: g.inTurn,
         winState: g.winState,
         stalemate: g.stalemate
     }))

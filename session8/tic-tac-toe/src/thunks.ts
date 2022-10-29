@@ -44,12 +44,15 @@ function waitForGameThunk(game: Game): Thunk {
     })
 }
 
-export async function newGameThunk(dispatch: Dispatch, _: GetState) {
-    const response = await fetch('http://localhost:8080/games', { method: 'POST', headers: { 'Accept': 'application/json'} })
-    if (response.ok) {
-        const game = await response.json()
-        dispatch(gameSlice.actions.newGame(game)) // createNewGameAction(game))
-        dispatch(waitForGameThunk(game))
+export function newGameThunk(name?: string) {
+    return async function(dispatch: Dispatch, _: GetState) {
+        console.log(name)
+        const response = await fetch('http://localhost:8080/games', { method: 'POST', body: JSON.stringify({ gameName: name }), headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} })
+        if (response.ok) {
+            const game = await response.json()
+            dispatch(gameSlice.actions.newGame(game))
+            dispatch(waitForGameThunk(game))
+        }
     }
 }
 

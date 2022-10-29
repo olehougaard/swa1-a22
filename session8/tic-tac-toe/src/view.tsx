@@ -1,7 +1,7 @@
 import { Store } from '@reduxjs/toolkit';
 import * as React from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux'
-import { Game, otherPlayer, Player } from './model';
+import { otherPlayer } from './model';
 import { State, Dispatch, gameSlice } from './store';
 import { concedeThunk, joinGameThunk, makeMoveThunk, newGameThunk } from './thunks';
 import './view.css';
@@ -30,6 +30,7 @@ const Board = ({enabled}: {enabled: boolean}) => {
 }
 
 const Lobby = () => {
+  const [ name, setName ] = React.useState('Game name')
   const games = useSelector((s: State) => s.lobby)
   const dispatch: Dispatch = useDispatch()
 
@@ -37,13 +38,14 @@ const Lobby = () => {
     <div>
       <h1>Lobby</h1>
       {
-        games.map(({gameNumber}) => 
+        games.map(({gameNumber, gameName}) => 
           <div key={gameNumber}>
-            Game {gameNumber}
+            {gameName}
             <button className = 'join' onClick = {() => dispatch(joinGameThunk(gameNumber))} >Join</button>
           </div>)
       }
-      <button id = 'new' onClick={() => dispatch(newGameThunk)}>New game</button>
+      <input type='text' onChange={e => setName(e.target.value)} value={name}/>
+      <button id = 'new' onClick={() => dispatch(newGameThunk(name))}>New game</button>
     </div>
   )
 }

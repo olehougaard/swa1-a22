@@ -2,7 +2,7 @@ const model = (() => {
     const array = (length, init) => Array.apply(null, new Array(length)).map(init || (_ => undefined))
     const updateArray = (a, i, f) => a.map((e, j) => (i === j) ? f(e, j) : e)
 
-    function createModel(board, inTurn, gameNumber, moves) {
+    function createModel(board, inTurn, gameNumber, gameName, moves) {
         const setTile = (board, x, y, value) => updateArray(board, x, row => updateArray(row, y, _ => value))
         
         const row = (x, y, dx, dy) => array(board.length, (_, i) => ({x: x + i * dx, y: y + i * dy}))
@@ -30,23 +30,24 @@ const model = (() => {
         
         const makeMove = (x, y) => {
             if (!legalMove(x, y)) throw 'Illegal move'
-            return createModel(setTile(board, x, y, inTurn), (inTurn === 'X') ? 'O' : 'X', gameNumber, [...moves, {x, y, player: inTurn}])
+            return createModel(setTile(board, x, y, inTurn), (inTurn === 'X') ? 'O' : 'X', gameNumber, gameName, [...moves, {x, y, player: inTurn}])
         }
         
-        const json = (extras = {}) => ({...extras, board, inTurn, winner: winState, stalemate, gameNumber})
+        const json = (extras = {}) => ({...extras, board, inTurn, winState, stalemate, gameNumber, gameName})
 
         const conceded = winner => {
             const winState = { winner, row: undefined}
             const conceded_state = { 
                 winState, 
                 stalemate: false, 
-                playerInTurn: (inTurn === 'X') ? 'O' : 'X', 
+                inTurn: (inTurn === 'X') ? 'O' : 'X', 
                 legalMove: () => false, 
                 makeMove: () => conceded_state,
                 conceded: () => conceded_state, 
                 board, 
                 json: (extras = {}) => Object.assign(extras,  {board, inTurn, winState, stalemate, gameNumber}), 
                 gameNumber, 
+                gameName,
                 moves: [...moves, { conceded: true, player: inTurn }]
             }
             return conceded_state
@@ -55,18 +56,19 @@ const model = (() => {
         return { 
             winState, 
             stalemate, 
-            playerInTurn: inTurn, 
+            inTurn, 
             legalMove, 
             makeMove,
             conceded, 
             board, 
             json, 
-            gameNumber, 
+            gameNumber,
+            gameName, 
             moves 
         }
     }
 
-    return gameNumber => createModel(array(3, _ => array(3)), 'X', gameNumber, [])
+    return (gameNumber, gameName) => createModel(array(3, _ => array(3)), 'X', gameNumber, gameName, [])
 })()
 
 module.exports = model
