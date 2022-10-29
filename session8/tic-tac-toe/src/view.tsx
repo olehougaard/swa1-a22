@@ -1,11 +1,34 @@
 import { Store } from '@reduxjs/toolkit';
 import * as React from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux'
-import { State } from './store';
+import { State, Dispatch } from './store';
+import { joinGameThunk, makeMoveThunk, newGameThunk } from './thunks';
 import './view.css';
+
+const Board = () => {
+  const gameState = useSelector((s: State) => s.game)
+  if (gameState.mode === 'no game') return <div></div>
+  const { board } = gameState.game
+  console.log(board)
+  const dispatch: Dispatch = useDispatch()
+  return (
+    <table>
+      <tbody>
+        { board.map((row, x) =>
+            <tr key={x}>{ row.map((tile, y) => 
+              <td key={x+''+y}
+                  className={tile || 'blank'}
+                  onClick= {() => dispatch(makeMoveThunk(x, y))}/>)
+            }</tr>
+        )}
+      </tbody>
+    </table>
+  )
+}
 
 const Lobby = () => {
   const games = useSelector((s: State) => s.lobby)
+  const dispatch: Dispatch = useDispatch()
 
   return (
     <div>
@@ -14,16 +37,35 @@ const Lobby = () => {
         games.map(({gameNumber}) => 
           <div key={gameNumber}>
             Game {gameNumber}
+            <button className = 'join' onClick={() => dispatch(joinGameThunk(gameNumber))} >Join</button>
           </div>)
       }
-      <button id = 'new'>New game</button>
+      <button id = 'new' onClick={() => dispatch(newGameThunk)}>New game</button>
     </div>
   )
 }
 
+const Waiting = () => (
+  <div>
+    <h1>Waiting for other player...</h1>
+  </div>
+)
+
+const Page = () => {
+  const game = useSelector((s: State) => s.game)
+  switch(game.mode) {
+    case 'no game':
+      return <Lobby></Lobby>
+    case 'waiting':
+      return <Waiting></Waiting>
+    case 'playing':
+      return <Board></Board>
+  }
+}
+
 export const View = (store: Store<State>) =>
 <Provider store={store}>
-  <Lobby></Lobby>
+  <Page></Page>
 </Provider>
 
 /*

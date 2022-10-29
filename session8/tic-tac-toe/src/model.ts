@@ -1,7 +1,9 @@
-export type Player = string
+export type Player = 'X' | 'O'
+export type Board = ('X' | 'O' | undefined)[][]
 export type Game = {
     gameNumber: number,
-    board: string[][],
+    board: Board,
+    ongoing: boolean,
     inTurn: Player,
     winner?: Player,
     stalemate: boolean
@@ -13,18 +15,21 @@ export type Move = {
     player: Player
 }
 
-export type GameState = { playing: true, player: Player, game: Game} | { playing: false }
+export type GameState = 
+    { mode: 'playing', player: Player, game: Game} 
+  | { mode: 'waiting', player: Player, game: Game} 
+  | { mode: 'no game' }
 
-export const empty_game_state: GameState = { playing: false }
-
-export function game_state(player: Player, game: Game): GameState {
-    return { playing: true, player, game }
+function set<T>(xs: T[], i: number, e: T): T[] {
+    return xs.map((x, inx) => inx === i? e : x)
 }
 
-export function apply_move(game: Game, {x, y, player}: Move): Game {
+export const empty_game_state: GameState = { mode: 'no game' }
+
+export function apply_move(board: Board, {x, y, player}: Move): Board {
     if (x === undefined || y === undefined)
-        return game
-    else {
-        return {...game, board: {...game.board, [x]: {...game.board[x], [y]: player}}}
-    }
+        return board
+    else 
+        return set(board, x, set(board[x], y, player))
+    
 }

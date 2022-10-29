@@ -94,21 +94,17 @@ gameserver.post('/games/:gameNumber/moves', (req, res) => {
     .then( ({ x, y, inTurn }) => {
         const game = games[gameNumber]
         if (!ongoing_games[gameNumber])
-            res.status(403).send()
+            res.sendStatus(404)
         else if (inTurn === game.playerInTurn && game.legalMove(x,y)) {
             const afterMove = game.makeMove(x, y)
             games[gameNumber] = afterMove
             res.send(JSON.stringify({ 
-                moves: [{x, y, player: game.playerInTurn}], 
+                move: {x, y, player: game.playerInTurn}, 
                 inTurn: afterMove.playerInTurn, 
                 winner: afterMove.winner, 
                 stalemate: afterMove.stalemate  }))
         } else {
-            res.send(JSON.stringify({ 
-                moves: [], 
-                inTurn: game.playerInTurn, 
-                winner: game.winner, 
-                stalemate: game.stalemate }))
+            res.sendStatus(403)
         }
     })
 })
