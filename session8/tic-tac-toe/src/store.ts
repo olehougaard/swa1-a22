@@ -1,14 +1,14 @@
 import { configureStore, createSlice, PayloadAction, Action } from '@reduxjs/toolkit'
-import { apply_move, Move, Player, GameState, Game, empty_game_state } from './model'
+import { applyMove, Move, Player, GameState, Game, emptyGameState } from './model'
 
-type MakeMovePayload = {
+export type MakeMovePayload = {
     move: Move,
     inTurn: Player,
     winner?: Player,
     stalemate: boolean
 }
 
-type GamePayload = {
+export type GamePayload = {
     player: Player,
     game: Game
 }
@@ -17,7 +17,7 @@ const gameReducers = {
     makeMove(state: GameState, action: PayloadAction<MakeMovePayload>): GameState {
         const {move, ...props} = action.payload
         if (state.mode === 'playing') {
-            return {...state, game: { ...state.game, board: apply_move(state.game.board, move), ...props}}
+            return {...state, game: { ...state.game, board: applyMove(state.game.board, move), ...props}}
         } else
             return state
     },
@@ -33,7 +33,7 @@ const gameReducers = {
 
 export const gameSlice = createSlice<GameState, typeof gameReducers>({
     name: 'game',
-    initialState: empty_game_state,
+    initialState: emptyGameState,
     reducers: gameReducers
 })
 

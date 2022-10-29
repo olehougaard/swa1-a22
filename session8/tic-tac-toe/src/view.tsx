@@ -9,7 +9,6 @@ const Board = () => {
   const gameState = useSelector((s: State) => s.game)
   if (gameState.mode === 'no game') return <div></div>
   const { board } = gameState.game
-  console.log(board)
   const dispatch: Dispatch = useDispatch()
   return (
     <table>

@@ -10,8 +10,9 @@ export type Game = {
 }
 
 export type Move = {
-    x: number,
-    y: number,
+    conceded?: boolean
+    x?: number,
+    y?: number,
     player: Player
 }
 
@@ -24,9 +25,16 @@ function set<T>(xs: T[], i: number, e: T): T[] {
     return xs.map((x, inx) => inx === i? e : x)
 }
 
-export const empty_game_state: GameState = { mode: 'no game' }
+export function otherPlayer(p: Player): Player {
+    switch(p) {
+        case 'X': return 'O'
+        case 'O': return 'X'
+    }
+}
 
-export function apply_move(board: Board, {x, y, player}: Move): Board {
+export const emptyGameState: GameState = { mode: 'no game' }
+
+export function applyMove(board: Board, {x, y, player}: Move): Board {
     if (x === undefined || y === undefined)
         return board
     else 
