@@ -20,11 +20,9 @@ export type Move = {
 export type GameState = 
     { mode: 'playing' | 'waiting' | 'no game', player?: Player, game?: Game} 
 
-function set<T>(xs: T[], i: number, e: T): T[] {
-    return xs.map((x, inx) => inx === i? e : x)
-}
+const set = <T>(xs: T[], i: number, e: T): T[] => xs.map((x, inx) => inx === i? e : x)
 
-export function otherPlayer(p: Player): Player {
+export const otherPlayer = (p: Player): Player => {
     switch(p) {
         case 'X': return 'O'
         case 'O': return 'X'
@@ -33,10 +31,19 @@ export function otherPlayer(p: Player): Player {
 
 export const emptyGameState: GameState = { mode: 'no game' }
 
-export function applyMove(board: Board, {x, y, player}: Move): Board {
+const applyMoveBoard = (board: Board, {x, y, player}: Move): Board => {
     if (x === undefined || y === undefined)
         return board
     else 
         return set(board, x, set(board[x], y, player))
-    
+}
+
+const applyMoveGame = (game: Game, move: Move): Game => ({ ...game, board: applyMoveBoard(game.board, move) })
+
+export function makeMove(state: GameState, move: Move, props: Partial<Game>): GameState {
+    if (state.mode === 'playing')
+        return { ...state, game: {...applyMoveGame(state.game, move), ...props} }
+    else
+        return state
+
 }

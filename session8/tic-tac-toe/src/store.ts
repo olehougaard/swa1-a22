@@ -1,12 +1,7 @@
 import { configureStore, createSlice, PayloadAction, Action } from '@reduxjs/toolkit'
-import { applyMove, Move, Player, GameState, Game, emptyGameState } from './model'
+import { makeMove, Move, Player, GameState, Game, emptyGameState } from './model'
 
-export type MakeMovePayload = {
-    move: Move,
-    inTurn: Player,
-    winState?: { winner: Player, row?: any},
-    stalemate: boolean
-}
+export type MakeMovePayload = { move: Move } & Partial<Game>
 
 export type GamePayload = {
     player: Player,
@@ -16,23 +11,18 @@ export type GamePayload = {
 const gameReducers = {
     makeMove(state: GameState, action: PayloadAction<MakeMovePayload>): GameState {
         const {move, ...props} = action.payload
-        if (state.mode === 'playing') {
-            return {...state, game: {...state.game, board: applyMove(state.game.board, move), ...props}}
-        } else
-            return state
+        return makeMove(state, move, props)
     },
     newGame(_: GameState, action: PayloadAction<GamePayload>): GameState {
-        const { player, game } = action.payload
-        return {mode: 'waiting', player, game}
+        return {mode: 'waiting', ...action.payload}
     },
     setGame(_: GameState, action: PayloadAction<GamePayload>): GameState {
-        const { player, game } = action.payload
-        return {mode: 'playing', player, game}
+        return {mode: 'playing', ...action.payload}
     },
     leaveGame(_: GameState, __: Action): GameState {
         return {mode: 'no game'}
     }
-} 
+}
 
 export const gameSlice = createSlice<GameState, typeof gameReducers>({
     name: 'game',
@@ -45,12 +35,10 @@ const lobbyReducers = {
         return action.payload
     },
     newGame(state: Game[], action: PayloadAction<Game>): Game[] {
-        const game = action.payload
-        return [...state, game]
+        return [...state, action.payload]
     },
     joinGame(state: Game[], action: PayloadAction<Game>): Game[] {
-        const { gameNumber } = action.payload
-        return state.filter(g => g.gameNumber !== gameNumber)
+        return state.filter(g => g.gameNumber !== action.payload.gameNumber)
     }
 }
 

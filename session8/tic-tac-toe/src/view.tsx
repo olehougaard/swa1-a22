@@ -30,7 +30,7 @@ const Board = ({enabled}: {enabled: boolean}) => {
 }
 
 const Lobby = () => {
-  const [ name, setName ] = React.useState('Game name')
+  const [ name, setName ] = React.useState('Name')
   const games = useSelector((s: State) => s.lobby)
   const dispatch: Dispatch = useDispatch()
 
@@ -88,7 +88,7 @@ const GameOver = () => {
 const Playing = () => {
   const {game, player} = useSelector((s: State) => s.game)
   return <div>
-    <h1>Playing game {game.gameNumber}</h1>
+    <h1>Playing {game.gameName}</h1>
     {game.inTurn === player? <Active/> : <WaitingForTurn/>}
   </div>
 }

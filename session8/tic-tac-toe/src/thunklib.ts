@@ -5,25 +5,25 @@ export type Thunk = (dispatch: Dispatch, getState: GetState) => Promise<void>
 
 export type PollingOptions<T> = {
     intervalMs: number,
-    polling: () => Promise<T>,
-    actionCreator: (_:T) => (Action | undefined),
-    errorCreator?: (_:any) => (Action | undefined)
+    polling: (gs: GetState) => Promise<T>,
+    actionCreator: (_:T, gs: GetState) => (Action | undefined),
+    errorCreator?: (_:any, gs: GetState) => (Action | undefined)
 }
 
-export type ContinuousPollingOptions<T> = PollingOptions<T> & { cont?: (_:T) => boolean }
+export type ContinuousPollingOptions<T> = PollingOptions<T> & { cont?: (_:T, gs: GetState) => boolean }
 
 export function continuousPollingThunk<T>({intervalMs, polling, actionCreator, errorCreator = _ => undefined, cont = _ => true}: ContinuousPollingOptions<T>): Thunk {
-    return async function(dispatch: Dispatch, _: GetState) {
+    return async function(dispatch: Dispatch, getState: GetState) {
         async function loop() {
             try {
-                let t: T = await polling()
-                let action = actionCreator(t)
+                let t: T = await polling(getState)
+                let action = actionCreator(t, getState)
                 if (action !== undefined) 
                     dispatch(action)
-                if (cont(t)) 
+                if (cont(t, getState)) 
                     setTimeout(loop, intervalMs)
             } catch (e: any) {
-                let errorAction = errorCreator(e)
+                let errorAction = errorCreator(e, getState)
                 if (errorAction !== undefined)
                     dispatch(errorAction)
             }
@@ -33,6 +33,6 @@ export function continuousPollingThunk<T>({intervalMs, polling, actionCreator, e
 }
 
 export function shortPollingThunk<T>(options: PollingOptions<T>): Thunk {
-    return continuousPollingThunk({...options, cont: t => options.actionCreator(t) === undefined})
+    return continuousPollingThunk({...options, cont: (t, gs) => options.actionCreator(t, gs) === undefined})
 }
 

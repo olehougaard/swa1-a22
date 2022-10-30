@@ -95,11 +95,11 @@ gameserver.post('/games/:gameNumber/moves', (req, res) => {
     const gameNumber = req.params.gameNumber
     req.body
     .then(JSON.parse)
-    .then( ({ x, y, inTurn }) => {
+    .then( ({ x, y, player }) => {
         const game = games[gameNumber]
         if (!ongoing_games[gameNumber])
             res.sendStatus(404)
-        else if (inTurn === game.inTurn && game.legalMove(x,y)) {
+        else if (player === game.inTurn && game.legalMove(x,y)) {
             const afterMove = game.makeMove(x, y)
             games[gameNumber] = afterMove
             res.send(JSON.stringify({ 
