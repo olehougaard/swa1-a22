@@ -36,7 +36,6 @@ function reducer(model: Model = createModel([], []), action: Action) {
     case 'hire':
       const { employee, person } = action.payload
       return model.addEmployee(employee).updatePerson(person)
-
     default:
       return model
   }

@@ -5,9 +5,8 @@ import createView from './view'
 
 async function init() {
     try {
-        let renderer = (dom:JSX.Element) => ReactDOM.render(dom, document.getElementById('root'))
         const view = createView(store.dispatch)
-        store.subscribe(() => renderer(view(store.getState())))
+        store.subscribe(() => ReactDOM.render(view(store.getState()), document.getElementById('root')))
         store.dispatch(initThunk)
     } catch (err) {
         console.log(err)
