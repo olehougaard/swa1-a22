@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit'
 /*
 Note: None of these types need to be defined, they can be inferred correctly by TypeScript.
 The types are in here for documentation purposes.
+The types are not the same as in Redux, but they are compatible with Redux.
 */
 export type Observer = () => void
 
@@ -28,6 +29,10 @@ export type Store<State> = {
   replaceReducer(nextReducer: (s: State, a: Action) => State): void
 }
 
+
+/*
+This is the mandatory part
+ */
 function reducer(model: Model = createModel([], []), action: Action) {
   switch(action.type) {
     case 'init':
