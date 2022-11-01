@@ -50,11 +50,14 @@ const Lobby = () => {
   )
 }
 
-const WaitingForGame = () => (
-  <div>
+const WaitingForGame = () => {
+  React.useEffect(() => {
+    document.title = 'Waiting for other player...'
+  })
+  return <div>
     <h1>Waiting for other player...</h1>
   </div>
-)
+}
 
 const Active = () => {
   const {player} = useSelector((s: State) => s.game)
