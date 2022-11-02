@@ -12,22 +12,8 @@
             border-spacing: 0;
         }
     </style>
-    <script type="module">
-        import bound_property from "./bound_property.js"
-
-        window.init = function() {
-            const reverse = s => s.split("").reverse().join("")
-            const normalProperty = bound_property.create_initialized("reverse") 
-            const reverseProperty = bound_property.computed(normalProperty, reverse, reverse)
-
-            const normal = window.document.getElementById('normal')
-            const reversed = window.document.getElementById('reversed')
-            normalProperty.double_bind(bound_property.from_attribute(normal, 'value', l => normal.addEventListener('input', l)))
-            reverseProperty.double_bind(bound_property.from_attribute(reversed, 'value', l => reversed.addEventListener('input', l)))
-        }
-    </script>
 </head>
-<body onload="init()">
+<body>
     <div id='base'>
         <input id='normal'><input id='reversed'>
     </div>
