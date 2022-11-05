@@ -1,9 +1,7 @@
 const reverse = (s: string) => s.split("").reverse().join("")
-const el = document.getElementById('base')
 export default {
-    el,
-    data: {
-        s: "reverse"
+    data() {
+        return {s: "reverse"}
     },
     computed: {
         reversed: { 

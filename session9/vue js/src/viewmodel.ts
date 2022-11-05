@@ -1,13 +1,14 @@
 import { Model } from "./model"
 
-export default (el: HTMLElement, init_model: Model) => {
+export default (init_model: Model) => {
   let model = init_model
 
   return { 
-    el,
-    data: {
-      salary: 0,
-      personData: model.personData()
+    data() {
+      return {
+        salary: 0,
+        personData: model.personData()
+      }
     },
     methods: {
       async hire(id: number) {

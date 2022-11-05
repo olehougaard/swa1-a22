@@ -1,4 +1,4 @@
+import { createApp } from "vue"
 import vm from "./reversevm"
-import Vue from 'vue'
 
-new Vue(vm)
+createApp(vm).mount('#base')
