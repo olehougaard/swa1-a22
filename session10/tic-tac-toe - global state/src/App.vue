@@ -21,13 +21,21 @@
         if (this.model.gameState.mode !== 'no game')
           return this.model.gameState.game.gameNumber
       },
+      currentView() {
+        switch(this.mode) {
+          case 'no game':
+            return LobbyView
+          case 'waiting':
+            return WaitingView
+          case 'playing':
+            return GameView
+        }
+      }
     },
     components: { GameView, LobbyView, WaitingView }
   }
 </script>
 
 <template>
-  <lobby-view v-if="mode=='no game'"/>
-  <waiting-view v-if="mode=='waiting'" :game-number="gameNumber!"/>
-  <game-view v-if="mode=='playing'"/>
+  <component :is="currentView" :game-number="gameNumber!"/>
 </template>

@@ -8,12 +8,18 @@
       return {model}
     },
     computed: {
-      gameName() {
-        return this.model.game?.gameName
-      },
       active() {
         return !this.model.game?.stalemate && !this.model.game?.winState
       },
+      gameName() {
+        return this.model.game?.gameName
+      },
+      currentView() {
+        if (this.active)
+          return ActiveGameView
+        else
+          return FinishedGameView
+      }
     },
     components: { ActiveGameView, FinishedGameView }
   }
@@ -21,6 +27,5 @@
 
 <template>
   <h1>Playing {{gameName}} </h1>
-  <active-game-view v-if='active'/>
-  <finished-game-view v-else />
+  <component :is="currentView"/>
 </template>
