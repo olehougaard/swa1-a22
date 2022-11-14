@@ -14,6 +14,9 @@
       active() {
         return !this.model.game?.stalemate && !this.model.game?.winState
       },
+      activeComponent() {
+        return this.active? ActiveGameView : FinishedGameView
+      }
     },
     components: { ActiveGameView, FinishedGameView }
   }
@@ -21,6 +24,7 @@
 
 <template>
   <h1>Playing {{gameName}} </h1>
-  <active-game-view v-if='active'/>
-  <finished-game-view v-else />
+  <keep-alive>
+    <component :is="activeComponent"/>
+  </keep-alive>
 </template>

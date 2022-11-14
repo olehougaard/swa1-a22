@@ -6,7 +6,14 @@
 
   export default {
     data() {
-      return {model}
+      return {
+        model,
+        views: {
+          'no game': LobbyView,
+          waiting: WaitingView,
+          playing: GameView
+        }
+      }
     },
     provide() {
       return {
@@ -27,7 +34,5 @@
 </script>
 
 <template>
-  <lobby-view v-if="mode=='no game'"/>
-  <waiting-view v-if="mode=='waiting'" :game-number="gameNumber!"/>
-  <game-view v-if="mode=='playing'"/>
+  <component :is="views[mode]" :gameNumber="gameNumber!"/>
 </template>
