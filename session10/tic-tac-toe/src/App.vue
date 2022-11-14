@@ -14,13 +14,6 @@
         gameState: {mode: 'no game'}
       }
     },
-    provide() {
-      return {
-        goToLobby: () => {
-          this.gameState.mode = 'no game'
-        }
-      }
-    },
     methods: {
       gameJoined(game: Game) {
         if (game.ongoing)
@@ -28,8 +21,11 @@
         else 
           this.gameState = {mode: 'waiting', player: 'X', game}
       },
-      gameStarted() {
+      playGame() {
         this.gameState.mode = 'playing'
+      },
+      goToLobby() {
+        this.gameState.mode = 'no game'
       }
     },
     components: { GameView, LobbyView, WaitingView }
@@ -38,6 +34,6 @@
 
 <template>
   <lobby-view v-if="gameState.mode=='no game'" @game-joined="gameJoined"/>
-  <waiting-view v-if="gameState.mode=='waiting'" :player="gameState.player" :game="gameState.game" @game-started="gameStarted"/>
-  <game-view v-if="gameState.mode=='playing'" :player="gameState.player" :game="gameState.game"/>
+  <waiting-view v-if="gameState.mode=='waiting'" :player="gameState.player" :game="gameState.game" @game-started="playGame"/>
+  <game-view v-if="gameState.mode=='playing'" :player="gameState.player" :game="gameState.game" @go-to-lobby="goToLobby"/>
 </template>

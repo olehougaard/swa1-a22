@@ -19,6 +19,7 @@
             required: true
           }
         },
+        emits: ['goToLobby'],
         computed: {
           active() {
             return !this.current.stalemate && !this.current.winState
@@ -36,5 +37,5 @@
 <template>
     <h1>Playing {{game.gameName}} </h1>
     <active-game-view v-if='active' :game='current' :player="player" @game-finished="onFinished"/>
-    <finished-game-view v-else :game='current' :player="player"/>
+    <finished-game-view v-else :game='current' :player="player" @go-to-lobby="$emit('goToLobby')"/>
 </template>

@@ -18,7 +18,7 @@
     data() {
       return {
         games,
-        gameName: 'name'
+        gameName: 'game'
       }
     },
     emits: {

@@ -23,6 +23,7 @@
             required: true
           }
         },
+        emits: ['goToLobby'],
         methods: {
             message() {
                 if (this.current.stalemate) 
@@ -30,10 +31,6 @@
                 else
                   return this.current.winState?.winner + ' won!'
             },
-            goToLobby() {
-              const callback: () => void = this.lobbyCallback as () => void
-              callback()
-            }
         },
         components: { BoardView }
     }
@@ -43,6 +40,6 @@
   <div id = 'game'>
     <p id = 'messages'>{{ message() }}</p>
     <board-view :enabled='false' :board='current.board'/>
-    <button @click="goToLobby">Return to lobby</button>
+    <button @click="$emit('goToLobby')">Return to lobby</button>
   </div>
 </template>
