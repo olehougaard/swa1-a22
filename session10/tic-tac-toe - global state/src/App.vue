@@ -6,7 +6,14 @@
 
   export default {
     data() {
-      return {model}
+      return {
+        model,
+        views: {
+          'no game': LobbyView,
+          waiting: WaitingView,
+          playing: GameView
+        }
+      }
     },
     provide() {
       return {
@@ -21,21 +28,11 @@
         if (this.model.gameState.mode !== 'no game')
           return this.model.gameState.game.gameNumber
       },
-      currentView() {
-        switch(this.mode) {
-          case 'no game':
-            return LobbyView
-          case 'waiting':
-            return WaitingView
-          case 'playing':
-            return GameView
-        }
-      }
     },
     components: { GameView, LobbyView, WaitingView }
   }
 </script>
 
 <template>
-  <component :is="currentView" :game-number="gameNumber!"/>
+  <component :is="views[mode]" :gameNumber="gameNumber!"/>
 </template>
