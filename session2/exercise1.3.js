@@ -1,5 +1,5 @@
-function createPerson(name, _age) {
-    let age = _age ?? 0
+function createPerson(name, age) {
+    age ??= 0
     
     function getName() {
         return name

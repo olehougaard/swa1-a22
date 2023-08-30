@@ -21,7 +21,7 @@ function addThat(x, y) {
     return x + y
 }
 
-console.log(addThis(2, 4))
+console.log(addThat(2, 4))
 
 function addThisAndThat(x, y) {
     return this + x + y

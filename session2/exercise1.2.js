@@ -10,7 +10,7 @@ function Point(x, y) {
 }
 
 function Circle({center, x, y, radius}) {
-    if (center === undefined) center = Point(x, y)
+    center ??= Point(x, y)
     const getCenterX = () => center.getX()
     const getCenterY = () => center.getY()
     const getRadius = () => radius
