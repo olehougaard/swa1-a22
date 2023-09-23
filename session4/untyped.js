@@ -2,6 +2,8 @@ function power(m, n) {
     if (!Number.isInteger(n) || n < 0)
         return NaN
     if (n === 0)
+        return 1
+    else if (n === 1)
         return m
     else if (n % 2 === 0)
         return power(m * m, n / 2)
